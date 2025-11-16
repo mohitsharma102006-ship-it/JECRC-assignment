@@ -1,0 +1,184 @@
+<!--
+Assignment Showcase - Static Website
+Files included in this single document:
+- index.html
+- css/style.css
+- js/script.js
+- assets/README (where to put PDFs/images)
+
+This is a ready-to-upload static site for GitHub Pages.
+Just create a repo, add these files (keeping folder structure), enable Pages on main branch / root, and your site will be live.
+
+Instructions for customizing and deployment are at the bottom of the file.
+-->
+
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Assignment Showcase</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="brand">Assignment Showcase</h1>
+      <nav>
+        <input id="search" placeholder="Search by title or subject..." />
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <h2>Showcase of Assignments</h2>
+      <p>Upload your solved assignments to your GitHub repo (or provide public links), then add entries below to list them here. This static site is perfect for a portfolio or class resource.</p>
+    </section>
+
+    <section class="upload-note">
+      <strong>How to add assignments:</strong>
+      <ol>
+        <li>Place the assignment PDF/image inside <code>assets/</code> (or host it elsewhere and paste the public URL).</li>
+        <li>Edit <code>js/script.js</code> and add a new object to the <code>assignments</code> array with the file URL, title, subject, and description.</li>
+        <li>Commit &amp; push to GitHub. The list updates automatically from the array in script.js.</li>
+      </ol>
+    </section>
+
+    <section id="list" class="assignment-list">
+      <!-- JavaScript will inject cards here -->
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>&copy; Assignment Showcase • Built for students</small>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
+
+
+/* css/style.css */
+/* Place this file at css/style.css */
+:root{--bg:#0d0d0d;--card:#1a1a1a;--accent:#4f8cff;--muted:#9ca3af}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;margin:0;background:var(--bg);color:#111}
+.container{max-width:980px;margin:0 auto;padding:18px}
+.site-header{background:linear-gradient(90deg,#fff 0%,#f1f5f9 100%);box-shadow:0 1px 0 rgba(0,0,0,0.05)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 18px}
+.brand{margin:0;color:var(--accent)}
+header input{padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;min-width:260px}
+.intro{padding:18px 0}
+.assignment-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:12px}
+.card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 4px 10px rgba(16,24,40,0.04)}
+.card h3{margin:0 0 6px;font-size:16px}
+.card p{margin:0 0 8px;color:var(--muted);font-size:14px}
+.actions{display:flex;gap:8px;margin-top:8px}
+.btn{display:inline-block;padding:8px 10px;border-radius:8px;text-decoration:none;border:1px solid transparent}
+.btn-view{background:transparent;border-color:#e6eefc;color:var(--accent)}
+.btn-download{background:var(--accent);color:#fff}
+.upload-note{background:#fff;border-radius:8px;padding:10px;margin-bottom:12px}
+.site-footer{padding:14px 0;text-align:center;color:var(--muted)}
+
+/* js/script.js */
+/* Place this file at js/script.js */
+// Add assignment objects here. For GitHub Pages, upload PDFs to assets/ and reference them like 'assets/assignment1.pdf'
+const assignments = [
+  {
+    id: 'a1',
+    title: 'Digital Electronics - Assignment 1',
+    subject: 'Digital Electronics',
+    description: 'Solved questions on Boolean algebra and flip-flops.',
+    fileUrl: 'assets/DE_Assignment1.pdf'
+  },
+  {
+    id: 'a2',
+    title: 'Calculus - Practice Problems',
+    subject: 'Mathematics',
+    description: 'Limits, derivatives and integrals with solutions.',
+    fileUrl: 'assets/Calculus_Practice.pdf'
+  },
+  {
+    id: 'a3',
+    title: 'DSA - Linked List Assignment',
+    subject: 'Data Structures',
+    description: 'Implementations and complexity analysis.',
+    fileUrl: 'assets/DSA_LinkedList.pdf'
+  }
+];
+
+const listEl = document.getElementById('list');
+const searchEl = document.getElementById('search');
+
+function render(list) {
+  listEl.innerHTML = '';
+  if (list.length === 0) {
+    listEl.innerHTML = '<div class="card"><p>No assignments found.</p></div>';
+    return;
+  }
+  list.forEach(item => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <h3>${escapeHtml(item.title)}</h3>
+      <div style="font-size:13px;color:var(--muted)">${escapeHtml(item.subject)}</div>
+      <p>${escapeHtml(item.description)}</p>
+      <div class="actions">
+        <a class="btn btn-view" href="${item.fileUrl}" target="_blank" rel="noreferrer">View</a>
+        <a class="btn btn-download" href="${item.fileUrl}" download>Download</a>
+      </div>
+    `;
+    listEl.appendChild(card);
+  });
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// initial render
+render(assignments);
+
+// search
+searchEl.addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  const filtered = assignments.filter(a =>
+    a.title.toLowerCase().includes(q) || a.subject.toLowerCase().includes(q) || a.description.toLowerCase().includes(q)
+  );
+  render(filtered);
+});
+
+/* assets/README.md */
+/* Put your assignment files (PDFs/images) in the assets/ folder and reference them in js/script.js. Example: assets/DE_Assignment1.pdf */
+
+
+/* Deployment instructions (copy this to your repo README) */
+/*
+1) Create a GitHub repo (public)
+2) Place the following structure at repo root:
+   - index.html
+   - css/style.css
+   - js/script.js
+   - assets/ (put PDF files here)
+3) Commit & push to GitHub
+4) In repo -> Settings -> Pages -> Branch: main, Folder: / (root) -> Save
+5) After a minute, your site will be live at https://<your-username>.github.io/<repo-name>/
+
+Customizing:
+- Edit js/script.js to add or remove assignments.
+- Change styling in css/style.css
+- Replace brand text in index.html
+
+Notes:
+- GitHub Pages is static: uploading files to assets/ is the simplest way to add assignment files.
+- If you want students to upload directly from the website, you need a backend or Firebase. I can add a Firebase-powered upload version if you want.
+*/
